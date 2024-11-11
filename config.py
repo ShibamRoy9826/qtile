@@ -1,31 +1,48 @@
 # Modules
 import os
-import subprocess
-
+import toml
 from libqtile import hook
 
 import group_layouts
 import keybindings
 import screens_and_bars
+from variables import *
+
+#######  Config File  =================================================================
+
+# Creating Config if it doesn't exist
+if not os.path.isfile(config_file):
+    with open(config_file, "w") as f:
+        f.write(defaultConf)
+
+# Reading config
+with open(config_file, "r") as fl:
+    config = toml.load(fl)
 
 ###### Hooks ========================================================================
-focusApps = ["xounalpp", "zen-browser"]
+
 
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser("~/.config/qtile/autostart.sh")
-    subprocess.call(home)
+    os.system(command=home)
+
+
+@hook.subscribe.resume
+def toggle_mute():
+    os.system(command="pactl set-sink-mute @DEFAULT_SINK@ toggle")
 
 
 @hook.subscribe.startup
 def _():
+    # Checking Modes
+    if config["mode_settings"]["mode"]:
+        os.system(command="pkill picom")
+    else:
+        os.system(command="picom -b")
+
     screens_and_bars.mybar.window.window.set_property("QTILE_BAR", 1, "CARDINAL", 32)
 
-
-@hook.subscribe.client_new
-def limit_applications(window):
-    if keybindings.focus_mode and window.window.get_wm_class() not in focusApps:
-        window.kill()
 
 ########## Some variables ==========================================================================
 keys = keybindings.keybinds

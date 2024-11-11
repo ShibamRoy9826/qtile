@@ -4,7 +4,7 @@ libinput-gestures-setup start &
 bash $HOME/Addons/CustomScripts/nightLight.sh &
 mpd &
 picom -b &
-python $HOME/easyfeh/easyfeh.py &
+python $HOME/dev/easyfeh/easyfeh.py -restore &
 dunst &
 
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
