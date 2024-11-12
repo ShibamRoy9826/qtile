@@ -1,2 +1,5 @@
+[general]
+screenshot_directory="/home/shibam/Pictures/Screenshots"
+
 [mode_settings]
 mode = 1

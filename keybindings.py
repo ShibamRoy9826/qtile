@@ -3,6 +3,8 @@ from libqtile.config import Click, Drag, Group, Key
 from libqtile.lazy import lazy
 import toml
 from variables import *
+from os import mkdir, system
+from time import strftime
 
 # Terminal
 if qtile.core.name == "x11":
@@ -21,6 +23,25 @@ def switchMode(event):
     with open(config_file,"w") as f:
         toml.dump(config,f)
     qtile.cmd_restart()
+
+@lazy.function
+def takeScreenshot(event,select=False):
+    scrDir=config["general"]["screenshot_directory"]
+    filename=strftime("Screenshot-%d-%b-%y__%H-%M-%S.png")
+    filepath=path.join(scrDir,filename)
+    if not path.exists(scrDir):
+        mkdir(config["general"]["screenshot_directory"])
+    
+    if select:
+        system(command=f"scrot -z -s -F '{filepath}'")
+        system(command="scrot -z -F '-' | xclip -sel clipboard -t image/png")
+        system(command=f"notify-send 'Screenshot captured:)' 'Screenshot has been copied and is saved as {filepath}'")
+    else:
+        system(command=f"scrot -z -F '{filepath}'")
+        system(command="scrot -z -F '-' | xclip -sel clipboard -t image/png")
+        system(command=f"notify-send 'Screenshot captured:)' 'Screenshot has been copied and is saved as {filepath}'")
+
+    
     
 
 ####### Keybindings =====================================================================
@@ -124,6 +145,8 @@ keybinds = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(), desc="Run a command using a prompt widget"),
+    Key([],"Print", takeScreenshot(), desc="Take a screenshot"),
+    Key([mod],"Print", takeScreenshot(select=True), desc="Take a screenshot"),
 
     ## Mode Shift
     Key([mod, "shift"], "m", switchMode(), desc="Switch Modes"),
@@ -169,7 +192,7 @@ for i in groups:
 ## Mouse bindings
 mouse = [
     Drag(
-        [mod, "control"],
+        [mod ],
         "Button1",
         lazy.window.set_position_floating(),
         start=lazy.window.get_position(),

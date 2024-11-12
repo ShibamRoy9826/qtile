@@ -12,7 +12,9 @@ notes = "xournalpp"
 explorer = "thunar"
 config_file = f"/home/{getlogin()}/.config/qtile/config.toml"
 
-defaultConf="""
+defaultConf=f"""
+[general]
+screenshot_directory="/home/{getlogin()}/Pictures/Screenshots"
 [mode_settings]
 # 0 -> Normal , 1 -> Focus
 mode=0
