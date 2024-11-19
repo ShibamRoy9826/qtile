@@ -41,7 +41,7 @@ def _():
     else:
         os.system(command="picom -b")
 
-    screens_and_bars.mybar.window.window.set_property("QTILE_BAR", 1, "CARDINAL", 32)
+    # screens_and_bars.mybar.window.window.set_property("QTILE_BAR", 1, "CARDINAL", 32)
 
 
 ########## Some variables ==========================================================================

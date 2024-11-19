@@ -19,7 +19,7 @@ if config["mode_settings"]["mode"]:
 else:
     normal_color="#595959aa"
     focus_color="#cba6f7"
-    border_w=3
+    border_w=2
     floating_border_w=2
     border_ws=2
     gaps=10
@@ -91,7 +91,10 @@ floating = layout.Floating(
 )
 
 groups = [
-    ScratchPad("scratchpad", [DropDown("term", "st", opacity=1.0, height=0.5)]),
+    ScratchPad("scratchpad", [
+        DropDown("term", "st", opacity=1.0, height=0.5),
+        DropDown("recorder", "simplescreenrecorder", opacity=1.0, height=0.5),
+        ]),
     Group("1"),
     Group("2"),
     Group("3"),

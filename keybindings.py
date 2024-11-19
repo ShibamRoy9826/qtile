@@ -89,19 +89,19 @@ keybinds = [
     Key(
         [mod, "shift"],
         "w",
-        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh.py -random"),
+        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh/easyfeh.py -random"),
         desc="Change to random wallpaper",
     ),
     Key(
         [mod, "shift"],
         "left",
-        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh.py -prev"),
+        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh/easyfeh.py -prev"),
         desc="Change to previous wallpaper",
     ),
     Key(
         [mod, "shift"],
         "right",
-        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh.py -next"),
+        lazy.spawn("python /home/shibam/dev/easyfeh/easyfeh/easyfeh.py -next"),
         desc="Change to next wallpaper",
     ),
     Key([mod], "Return", lazy.spawn(term), desc="Launch terminal"),
@@ -126,7 +126,13 @@ keybinds = [
         [mod],
         "s",
         lazy.group["scratchpad"].dropdown_toggle("term"),
-        desc="Toggle between layouts",
+        desc="Starting dropdown terminal",
+    ),
+    Key(
+        [mod],
+        "r",
+        lazy.group["scratchpad"].dropdown_toggle("recorder"),
+        desc="Start recorder",
     ),
     # Other Essentials
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
@@ -144,9 +150,13 @@ keybinds = [
     ),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "r", lazy.spawncmd(), desc="Run a command using a prompt widget"),
+    # Key([mod], "r", lazy.spawncmd(), desc="Run a command using a prompt widget"),
     Key([],"Print", takeScreenshot(), desc="Take a screenshot"),
     Key([mod],"Print", takeScreenshot(select=True), desc="Take a screenshot"),
+    
+    #Volume Control
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")),
 
     ## Mode Shift
     Key([mod, "shift"], "m", switchMode(), desc="Switch Modes"),
