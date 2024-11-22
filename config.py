@@ -1,46 +1,40 @@
-# Modules
-import os
-import toml
-from libqtile import hook
+"""
+ ██████╗ ████████╗  ████████╗██╗██╗     ███████╗
+██╔═══██╗╚══██╔══╝  ╚══██╔══╝██║██║     ██╔════╝
+██║   ██║   ██║        ██║   ██║██║     █████╗  
+██║▄▄ ██║   ██║        ██║   ██║██║     ██╔══╝  
+╚██████╔╝   ██║███████╗██║   ██║███████╗███████╗
+ ╚══▀▀═╝    ╚═╝╚══════╝╚═╝   ╚═╝╚══════╝╚══════╝
+        - By Shibam Roy
+"""
 
+# Modules
 import group_layouts
 import keybindings
 import screens_and_bars
 from variables import *
 
-#######  Config File  =================================================================
-
-# Creating Config if it doesn't exist
-if not os.path.isfile(config_file):
-    with open(config_file, "w") as f:
-        f.write(defaultConf)
-
-# Reading config
-with open(config_file, "r") as fl:
-    config = toml.load(fl)
-
 ###### Hooks ========================================================================
-
 
 @hook.subscribe.startup_once
 def autostart():
-    home = os.path.expanduser("~/.config/qtile/autostart.sh")
-    os.system(command=home)
+    home = path.expanduser("~/.config/qtile/autostart/autostart.sh")
+    run(home,capture_output=False,shell=True)
 
 
 @hook.subscribe.resume
 def toggle_mute():
-    os.system(command="pactl set-sink-mute @DEFAULT_SINK@ toggle")
-
+    run("pactl set-sink-mute @DEFAULT_SINK@ toggle",capture_output=False,shell=True)
 
 @hook.subscribe.startup
 def _():
     # Checking Modes
-    if config["mode_settings"]["mode"]:
-        os.system(command="pkill picom")
+    if config["mode_settings"]["mode"]=="focus":
+        run("pkill picom",capture_output=False,shell=True)
     else:
-        os.system(command="picom -b")
+        run("picom -b",capture_output=False,shell=True)
 
+    # Temporary fix to a problem
     # screens_and_bars.mybar.window.window.set_property("QTILE_BAR", 1, "CARDINAL", 32)
 
 

@@ -1,5 +1,29 @@
 [general]
+launcher = "rofi -show drun -theme /home/shibam/.config/rofi/Launcher.rasi"
+powermenu = "sh -c ~/.config/rofi/powermenu.sh"
+browser = "zen-browser"
+file_manager = "thunar"
+terminal_x11 = "st"
+terminal_wayland = "foot"
+
+[screenshot]
 screenshot_directory = "/home/shibam/Pictures/Screenshots"
+screenshot_format = "Screenshot-%d-%b-%y__%H-%M-%S.png"
+screenshot_command = "scrot -z -F ':f:'"
+screenshot_copy_command = "scrot -z -F '-' | xclip -sel clipboard -t image/png"
+screenshot_command_select = "scrot -z -s -F ':f:'"
+screenshot_copy_command_select = "scrot -z -F '-' | xclip -sel clipboard -t image/png"
+screenshot_notification = true
+screenshot_title = "Screenshot Captured!"
+screenshot_message = "The screenshot has been captured and stored at :f: "
 
 [mode_settings]
-mode = 1
+mode = "focus"
+
+[colors]
+bg = "#11111b90"
+bg2 = "#18182590"
+fg = "#cdd6f4"
+fg2 = "#bac2de"
+urgent = "#f38ba8"
+primary = "#89b4fa"

@@ -1,13 +1,7 @@
 from libqtile import layout
 from libqtile.config import DropDown, Group, Match, ScratchPad
-import toml
+
 from variables import *
-
-# normal_color="#1e1e2e"
-# focus_color="#595959aa"
-
-with open(config_file, "r") as f:
-    config = toml.load(f)
 
 if config["mode_settings"]["mode"]:
     normal_color="#595959aa"
