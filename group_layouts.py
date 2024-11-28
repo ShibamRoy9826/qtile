@@ -1,22 +1,30 @@
 from libqtile import layout
-from libqtile.config import DropDown, Group, Match, ScratchPad
+from libqtile.config import Group, Match, ScratchPad
 
+from custom import custom_layouts
 from variables import *
 
-if config["mode_settings"]["mode"]:
-    normal_color="#595959aa"
-    focus_color="#cba6f7"
-    border_w=2
-    floating_border_w=1
-    border_ws=2
-    gaps=5
-else:
-    normal_color="#595959aa"
-    focus_color="#cba6f7"
-    border_w=2
-    floating_border_w=2
-    border_ws=2
-    gaps=10
+curr_mode = config["mode_settings"]["mode"]
+ind = mode_list.index(curr_mode)
+mode_num = mode_list[ind]
+
+# Defaults
+normal_color = "#595959aa"
+focus_color = "#cba6f7"
+border_w = 2
+floating_border_w = 1
+border_ws = 2
+gaps = 5
+
+for index, i in enumerate(config["modes"]):
+    if index == ind:
+        normal_color = i["normal_color"]
+        focus_color = i["focus_color"]
+        border_w = i["border_width"]
+        floating_border_w = i["floating_border_width"]
+        border_ws = i["border_width_single"]
+        gaps = i["gaps"]
+
 
 layout_var = [
     layout.Columns(
@@ -70,14 +78,13 @@ layout_var = [
 
 floating = layout.Floating(
     float_rules=[
-        # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
-        Match(wm_class="confirmreset"),  # gitk
-        Match(wm_class="makebranch"),  # gitk
-        Match(wm_class="maketag"),  # gitk
-        Match(wm_class="ssh-askpass"),  # ssh-askpass
-        Match(title="branchdialog"),  # gitk
-        Match(title="pinentry"),  # GPG key password entry
+        Match(wm_class="confirmreset"),
+        Match(wm_class="makebranch"),
+        Match(wm_class="maketag"),
+        Match(wm_class="ssh-askpass"),
+        Match(title="branchdialog"),
+        Match(title="pinentry"),
     ],
     border_focus=focus_color,
     border_normal=normal_color,
@@ -85,10 +92,6 @@ floating = layout.Floating(
 )
 
 groups = [
-    ScratchPad("scratchpad", [
-        DropDown("term", "st", opacity=1.0, height=0.5),
-        DropDown("recorder", "simplescreenrecorder", opacity=1.0, height=0.5),
-        ]),
     Group("1"),
     Group("2"),
     Group("3"),
@@ -97,3 +100,6 @@ groups = [
     Group("6"),
     Group("7"),
 ]
+
+if config["general"]["scratchpad_enabled"]:
+    groups.append(ScratchPad("scratchpad", custom_layouts.scratchpads))

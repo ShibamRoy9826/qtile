@@ -12,30 +12,34 @@
 import group_layouts
 import keybindings
 import screens_and_bars
+from custom.custom_func import *
 from variables import *
 
 ###### Hooks ========================================================================
 
+
 @hook.subscribe.startup_once
 def autostart():
-    home = path.expanduser("~/.config/qtile/autostart/autostart.sh")
-    run(home,capture_output=False,shell=True)
+    mode = config["mode_settings"]["mode"]
+    autostartScript = f"~/.config/qtile/autostart/{mode}_autostart.sh"
+    home = path.expanduser(autostartScript)
+    run(home, capture_output=False, shell=True)
 
 
 @hook.subscribe.resume
 def toggle_mute():
-    run("pactl set-sink-mute @DEFAULT_SINK@ toggle",capture_output=False,shell=True)
+    run(
+        "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        check=True,
+        capture_output=False,
+        shell=True,
+    )
 
+
+#####| Mode specific stuff |######################################################################
 @hook.subscribe.startup
 def _():
-    # Checking Modes
-    if config["mode_settings"]["mode"]=="focus":
-        run("pkill picom",capture_output=False,shell=True)
-    else:
-        run("picom -b",capture_output=False,shell=True)
-
-    # Temporary fix to a problem
-    # screens_and_bars.mybar.window.window.set_property("QTILE_BAR", 1, "CARDINAL", 32)
+    runOnStartup(config)
 
 
 ########## Some variables ==========================================================================

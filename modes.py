@@ -1,5 +1,5 @@
 ## Qtile related stuff
-from libqtile import bar, qtile
+from libqtile import bar
 from libqtile import widget as wdg
 from libqtile.config import Key
 from libqtile.lazy import lazy
@@ -9,14 +9,8 @@ from qtile_extras.widget.decorations import RectDecoration
 from functions import *
 from variables import *
 
-# Terminal
-if qtile.core.name == "x11":
-    term = config["general"]["terminal_x11"]
-else:
-    term = config["general"]["terminal_wayland"]
 
-#######| Switch modes |#######################################################
-
+#####################| Switching Modes |######################################################################### 
 @lazy.function
 def switchMode(event):
     curr_mode=config["mode_settings"]["mode"]
@@ -30,11 +24,6 @@ def switchMode(event):
     with open(config_file,"w") as f:
         dump(config,f)
     qtile.restart()
-
-#####################| Modes |######################################################################### 
-
-md={"normal":[[],[]],"focus":[[],[]]} # first list for keybindings, second for bars
-mode_list=["normal","focus"]
 showing_time = True
 
 ## Functions
@@ -154,8 +143,15 @@ md["focus"][0]=md["normal"][0]
 
 ##############################################| Bars |############################################################################
 
+if config["bar"]["bar_fg_primary"]:
+    fg=primary
+if config["bar"]["always_dark_fg"]:
+    fg="#11111b"
+if config["bar"]["always_light_fg"]:
+    fg="#cdd6f4"
+
 decor = [
-    RectDecoration(colour="#11111b", radius=10, filled=True, padding_y=6, group=True)
+    RectDecoration(colour=config["colors"]["bg"], radius=10, filled=True, padding_y=6, group=True)
 ]
 
 clock_widget = widget.Clock(
@@ -168,11 +164,12 @@ clock_widget = widget.Clock(
     },
 )
 
+
 md["normal"][1]= bar.Bar(
     [
         widget.Spacer(length=15),
         widget.TextBox(
-            text="󰣇 ",
+            text=config["bar"]["bar_logo"],
             fontsize=15,
             padding=15,
             foreground=primary,
@@ -195,11 +192,11 @@ md["normal"][1]= bar.Bar(
             padding=6,
             border_color=bg,
             this_current_screen_border=primary,
-            this_screen_border=fg2,
+            this_screen_border=fg,
             decorations=decor,
         ),
         widget.Spacer(length=15),
-        widget.CurrentLayoutIcon(foreground=fg, scale=0.7, padding=8),
+        widget.CurrentLayoutIcon(foreground=fg, scale=0.6, padding=8),
         widget.Spacer(length=bar.STRETCH),
         ## Music
         widget.Mpd2(
@@ -209,6 +206,7 @@ md["normal"][1]= bar.Bar(
             play_states={"pause": "󰐊", "play": "󰏤", "stop": "󰓛"},
             idle_message="No Music playing rn...",
             idle_format="󰝚   {idle_message}",
+            foreground=fg,
             fontsize=15,
             mouse_callbacks={
                 "Button2": lazy.spawn("mpc -p 6200 next"),  # Left-click to toggle
@@ -222,6 +220,7 @@ md["normal"][1]= bar.Bar(
             backlight_name="intel_backlight",
             fontsize=15,
             change_command="brightnessctl set {0}%",
+            foreground=fg,
             step=5,
             padding=20,
             format="󰃞 {percent:2.0%}",
@@ -232,12 +231,13 @@ md["normal"][1]= bar.Bar(
             padding=20,
             step=1,
             scroll_step=1,
+            foreground=fg,
             mute_format="󰖁 ",
             unmute_format="󰕾 {volume}%",
             volume_app="pavucontrol",
             mouse_callbacks={
                 "Button1": lambda: toggle_mute(),
-                "Button3": lazy.spawn("kitty ncmpcpp"),
+                "Button3": lazy.spawn("st ncmpcpp"),
             },
         ),
         #### RESOURCE MONITOR
@@ -278,7 +278,7 @@ md["normal"][1]= bar.Bar(
         widget.Spacer(length=15),
     ],
     45,
-    background="#11111b90",
+    background=config["colors"]["bg"],
     border_color=bg,
     border_width=[0, 0, 0, 0],
     margin=[6, 35, 2, 35],
@@ -290,7 +290,7 @@ md["focus"][1] = bar.Bar(
     [
         widget.Spacer(length=15),
         widget.TextBox(
-            text="󰣇 ",
+            text=config["bar"]["bar_logo"],
             fontsize=15,
             padding=15,
             foreground=primary,
@@ -325,6 +325,7 @@ md["focus"][1] = bar.Bar(
             play_states={"pause": "󰐊", "play": "󰏤", "stop": "󰓛"},
             idle_message="No Music playing rn...",
             idle_format="󰝚   {idle_message}",
+            foreground=fg,
             fontsize=15,
             mouse_callbacks={
                 "Button2": lazy.spawn("mpc -p 6200 next"),  # Left-click to toggle
@@ -339,6 +340,7 @@ md["focus"][1] = bar.Bar(
             change_command="brightnessctl set {0}%",
             step=5,
             padding=20,
+            foreground=fg,
             format="󰃞 {percent:2.0%}",
         ),
         wdg.PulseVolume(
@@ -349,10 +351,11 @@ md["focus"][1] = bar.Bar(
             scroll_step=1,
             mute_format="󰖁 ",
             unmute_format="󰕾 {volume}%",
+            foreground=fg,
             volume_app="pavucontrol",
             mouse_callbacks={
                 "Button1": lambda: toggle_mute(),
-                "Button3": lazy.spawn("kitty ncmpcpp"),
+                "Button3": lazy.spawn("st ncmpcpp"),
             },
         ),
         #### RESOURCE MONITOR
@@ -364,7 +367,7 @@ md["focus"][1] = bar.Bar(
             format="󰔏 {temp:.1f}{unit}",
             padding=20,
             decorations=decor,
-            mouse_callbacks={"Button1": lazy.spawn("kitty btop")},
+            mouse_callbacks={"Button1": lazy.spawn("st btop")},
         ),
         widget.GenPollText(
             func=update_memory,  # Function to call
@@ -374,7 +377,7 @@ md["focus"][1] = bar.Bar(
             update_interval=5,
             margin_x=8,
             padding=8,
-            mouse_callbacks={"Button1": lazy.spawn("kitty btop")},
+            mouse_callbacks={"Button1": lazy.spawn("st btop")},
             decorations=decor,
         ),
         widget.CPU(
@@ -384,7 +387,7 @@ md["focus"][1] = bar.Bar(
             update_interval=5,
             margin_x=8,
             padding=20,
-            mouse_callbacks={"Button1": lazy.spawn("kitty btop")},
+            mouse_callbacks={"Button1": lazy.spawn("st btop")},
             decorations=decor,
         ),
         ##### CLOCK WIDGET
@@ -392,7 +395,7 @@ md["focus"][1] = bar.Bar(
         widget.Spacer(length=15),
     ],
     45,
-    background="#11111b90",
+    background=config["colors"]["bg"],
     border_color=bg,
     border_width=[0, 0, 0, 0],
     margin=[0, 0, 0, 0],

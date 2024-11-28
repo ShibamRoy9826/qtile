@@ -1,11 +1,24 @@
 from variables import *
 from subprocess import Popen,PIPE
 from libqtile.lazy import lazy
-from time import strftime 
+from time import strftime ,sleep
 from libqtile import qtile
+# from libqtile.log_utils import logger
 
 ###### Modes ===========================================================================
 
+@lazy.function
+def shiftBar(event):
+    with open(config_file, "r") as fl:
+        config = load(fl)
+    bar_pos = config["bar"]["bar_position"]
+    if bar_pos == "top":
+        config["bar"]["bar_position"] = "bottom"
+    else:
+        config["bar"]["bar_position"] = "top"
+    with open(config_file,"w") as fl:
+        dump(config,fl)
+    qtile.restart()
 
 @lazy.function
 def takeScreenshot(event,select=False):
@@ -29,15 +42,8 @@ def takeScreenshot(event,select=False):
         message=config["screenshot"]["screenshot_message"].replace(":f:",filepath)
         run(f"notify-send '{heading}' '{message}'",shell=True,capture_output=False)
     
-def search():
-    qtile.cmd_spawn("rofi -show drun")
-
-
-def power():
-    qtile.cmd_spawn("sh -c ~/.config/rofi/powermenu.sh")
-
 def toggle_mute():
-    run(["amixer", "-D", "pulse", "sset", "Master", "toggle"])
+    run("pactl set-sink-mute @DEFAULT_SINK@ toggle",capture_output=False,shell=True)
 
 def update_memory():
     try:
@@ -49,3 +55,16 @@ def update_memory():
         return f"{used}"
     except Exception as e:
         return f"Error: {str(e)}"
+
+@lazy.function
+def randomWall(event):
+    run("easyfeh -r && xdotool key ctrl+super+r",check=True,shell=True)
+
+@lazy.function
+def nextWall(event):
+    run("easyfeh -n && xdotool key ctrl+super+r",check=True,shell=True)
+
+@lazy.function
+def prevWall(event):
+    run("easyfeh -p && xdotool key ctrl+super+r",check=True,shell=True)
+
